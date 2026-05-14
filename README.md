@@ -15,9 +15,9 @@ The project is intentionally compact, but it includes realistic backend and fron
 
 This full demo shows the React mock UI flow: summary cards, keyword filtering, create, edit, inline status update, delete confirmation, and refreshed counts.
 
-[![Campaign Action Items full demo](docs/demo/campaign-action-items-full-demo-poster.png)](docs/demo/campaign-action-items-full-demo.mp4)
+https://github.com/user-attachments/assets/d70b326d-3ac9-4458-ae76-90b5e8f5c233
 
-Click the preview image above or open `docs/demo/campaign-action-items-full-demo.mp4` directly.
+If the video player does not render in your Markdown viewer, open `https://github.com/user-attachments/assets/d70b326d-3ac9-4458-ae76-90b5e8f5c233` directly.
 
 ## Goals
 
