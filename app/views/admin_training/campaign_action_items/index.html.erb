@@ -1,0 +1,76 @@
+<h1>Campaign Action Items Training</h1>
+
+<% if notice.present? %>
+  <p><%= notice %></p>
+<% end %>
+
+<% if @action_item.errors.any? %>
+  <section>
+    <h2>Validation errors</h2>
+    <ul>
+      <% @action_item.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </section>
+<% end %>
+
+<section>
+  <h2>Create Action Item</h2>
+
+  <%= form_with model: @action_item, url: '/admin/training/campaign_action_items', local: true do |form| %>
+    <div>
+      <%= form.label :campaign_id %>
+      <%= form.collection_select :campaign_id, @campaigns, :id, :name %>
+    </div>
+
+    <div>
+      <%= form.label :title %>
+      <%= form.text_field :title %>
+    </div>
+
+    <div>
+      <%= form.label :memo %>
+      <%= form.text_area :memo %>
+    </div>
+
+    <div>
+      <%= form.label :status %>
+      <%= form.select :status, CampaignActionItem.statuses.keys.map { |status| [status.humanize, status] } %>
+    </div>
+
+    <div>
+      <%= form.label :due_date %>
+      <%= form.date_field :due_date %>
+    </div>
+
+    <%= form.submit 'Create action item' %>
+  <% end %>
+</section>
+
+<section>
+  <h2>Action Items</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Campaign</th>
+        <th>Status</th>
+        <th>Due date</th>
+        <th>Detail</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @action_items.each do |action_item| %>
+        <tr>
+          <td><%= action_item.title %></td>
+          <td><%= action_item.campaign.name %></td>
+          <td><%= status_badge_label(action_item) %></td>
+          <td><%= action_item_due_date_label(action_item) %></td>
+          <td><%= link_to 'Show', "/admin/training/campaign_action_items/#{action_item.id}" %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</section>

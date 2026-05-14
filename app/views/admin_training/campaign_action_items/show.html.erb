@@ -1,0 +1,20 @@
+<h1><%= @action_item.title %></h1>
+
+<dl>
+  <dt>Campaign</dt>
+  <dd><%= @action_item.campaign.name %></dd>
+
+  <dt>Status</dt>
+  <dd><%= status_badge_label(@action_item) %></dd>
+
+  <dt>Due date</dt>
+  <dd><%= action_item_due_date_label(@action_item) %></dd>
+
+  <dt>Memo</dt>
+  <dd><%= @action_item.memo.presence || 'No memo' %></dd>
+
+  <dt>Creator</dt>
+  <dd><%= @action_item.created_by_admin&.email || 'No creator' %></dd>
+</dl>
+
+<%= link_to 'Back to training list', '/admin/training/campaign_action_items' %>
