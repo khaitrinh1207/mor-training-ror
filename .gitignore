@@ -33,6 +33,7 @@
 # Ignore local agent and generated training artifacts.
 AGENTS.md
 /docs/superpowers/
+/docs/demo/*.mov
 
 # Ignore frontend dependencies and build output.
 /node_modules/

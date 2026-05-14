@@ -10,7 +10,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
+  <body class="<%= ["#{controller_path.tr('/', '-')}-page", ('admin-training-page' if controller_path.start_with?('admin_training/'))].compact.join(' ') %>">
     <%= yield %>
   </body>
 </html>

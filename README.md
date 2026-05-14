@@ -11,6 +11,14 @@ The project is intentionally compact, but it includes realistic backend and fron
 - Jest and Testing Library coverage for frontend behavior.
 - Vite runtime for fast UI review.
 
+## Demo Video
+
+This full demo shows the React mock UI flow: summary cards, keyword filtering, create, edit, inline status update, delete confirmation, and refreshed counts.
+
+<video src="docs/demo/campaign-action-items-full-demo.mp4" controls poster="docs/demo/campaign-action-items-full-demo-poster.png" width="100%"></video>
+
+If the video does not render in your Markdown viewer, open `docs/demo/campaign-action-items-full-demo.mp4` directly.
+
 ## Goals
 
 This project is designed to teach the workflow needed for a production Rails codebase:
