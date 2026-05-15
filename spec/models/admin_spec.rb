@@ -32,14 +32,15 @@ RSpec.describe Admin, type: :model do
   end
 
   describe '.devise_modules' do
-    it 'enables BitStar-like database authentication modules' do
+    it 'enables only the admin modules needed by the training flow' do
       expect(described_class.devise_modules).to include(
         :database_authenticatable,
         :registerable,
-        :recoverable,
         :rememberable,
         :validatable
       )
+
+      expect(described_class.devise_modules).not_to include(:recoverable)
     end
   end
 end

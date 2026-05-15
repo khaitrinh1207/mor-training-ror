@@ -131,11 +131,13 @@ Admin authentication uses Devise HTML routes for signup and login, plus JSON ses
 | Method | Path | Purpose |
 | --- | --- | --- |
 | `GET` | `/admins/sign_up` | Render Devise signup page. |
-| `POST` | `/admins` | Create an admin account and session. |
+| `POST` | `/admins` | Create an admin account, then redirect to login without starting a session. |
 | `GET` | `/admins/sign_in` | Render Devise login page. |
 | `POST` | `/admins/sign_in` | Create an admin session. |
 | `GET` | `/match/api/v2/auth/admins/authenticate` | Return current admin session as JSON, including CSRF token. |
 | `DELETE` | `/match/api/v2/auth/admins/sign_out` | Clear the admin session for React API mode. |
+
+Unused Devise password reset and admin account edit/delete routes are intentionally not exposed in this training app.
 
 Protected action item API requests pass through `Match::Api::V2::Admin::BaseController`, which returns `401 admin_authorization_error` when no Devise admin session exists.
 

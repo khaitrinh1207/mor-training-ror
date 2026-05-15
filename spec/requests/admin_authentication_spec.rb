@@ -24,7 +24,7 @@ RSpec.describe 'Admin authentication', type: :request do
   end
 
   describe 'POST /admins' do
-    it 'creates an admin and starts a Devise session' do
+    it 'creates an admin and redirects to login without starting a session' do
       campaign = create(:campaign)
 
       expect do
@@ -37,9 +37,11 @@ RSpec.describe 'Admin authentication', type: :request do
         }
       end.to change(Admin, :count).by(1)
 
+      expect(response).to redirect_to('/admins/sign_in')
+
       get "/match/api/v2/admin/campaigns/#{campaign.id}/action_items"
 
-      expect(response).to have_http_status(:ok)
+      expect(response).to have_http_status(:unauthorized)
     end
   end
 

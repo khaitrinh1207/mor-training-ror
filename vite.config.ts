@@ -6,7 +6,8 @@ const railsProxy = {
   changeOrigin: true,
   configure: (proxy: { on: (event: string, callback: (proxyReq: { setHeader: (name: string, value: string) => void }) => void) => void }) => {
     proxy.on('proxyReq', (proxyReq) => {
-      proxyReq.setHeader('origin', 'http://localhost:3000');
+      proxyReq.setHeader('host', 'localhost:5173');
+      proxyReq.setHeader('origin', 'http://localhost:5173');
     });
   }
 };

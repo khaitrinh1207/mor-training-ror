@@ -1,5 +1,10 @@
 Rails.application.routes.draw do
-  devise_for :admins
+  devise_for :admins, skip: [:registrations, :passwords]
+
+  devise_scope :admin do
+    get 'admins/sign_up', to: 'admins/registrations#new', as: :new_admin_registration
+    post 'admins', to: 'admins/registrations#create', as: :admin_registration
+  end
 
   namespace :match do
     namespace :api do
@@ -13,7 +18,10 @@ Rails.application.routes.draw do
 
         namespace :admin do
           resources :campaigns, only: [] do
-            resources :action_items, controller: 'campaign_action_items', only: [:index, :create, :update, :destroy]
+            get 'action_items', to: 'campaign_action_items#index'
+            post 'action_items', to: 'campaign_action_items#create'
+            patch 'action_items/:id', to: 'campaign_action_items#update'
+            delete 'action_items/:id', to: 'campaign_action_items#destroy'
           end
         end
       end
@@ -23,9 +31,4 @@ Rails.application.routes.draw do
   scope path: 'admin/training', module: 'admin_training', as: 'admin_training' do
     resources :campaign_action_items, only: [:index, :show, :create]
   end
-
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
-  # Defines the root path route ("/")
-  # root "articles#index"
 end
