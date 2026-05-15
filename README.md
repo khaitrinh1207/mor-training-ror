@@ -5,6 +5,7 @@ Campaign Action Items is a small Rails + React training project that mirrors a B
 The project is intentionally compact, but it includes realistic backend and frontend patterns:
 
 - Rails API controllers, serializers, models, request specs, and service objects.
+- Devise signup, login, logout, and session-backed admin API authorization.
 - Redis summary caching with MySQL fallback.
 - OpenSearch keyword search service with MySQL fallback.
 - React + TypeScript UI with repository/domain/infrastructure layering.
@@ -61,6 +62,7 @@ This project is designed to teach the workflow needed for a production Rails cod
 .
 ├── app/
 │   ├── controllers/match/api/v2/admin/
+│   ├── controllers/match/api/v2/auth/
 │   ├── models/
 │   ├── serializers/
 │   └── services/campaign_action_items/
@@ -68,6 +70,7 @@ This project is designed to teach the workflow needed for a production Rails cod
 ├── db/
 ├── frontend/
 │   ├── bsmatch/components/campaignActionItems/
+│   ├── bsmatch/components/adminAuth/
 │   ├── bsmatch/configs/
 │   ├── bsmatch/domains/campaignActionItems/
 │   ├── bsmatch/infrastructures/
@@ -120,6 +123,21 @@ Statuses:
 The UI displays these statuses in Vietnamese while preserving English enum values for the API and database layer.
 
 ## Backend API
+
+Admin authentication uses Devise HTML routes for signup and login, plus JSON session endpoints for the React API mode.
+
+### Admin Auth Endpoints
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/admins/sign_up` | Render Devise signup page. |
+| `POST` | `/admins` | Create an admin account and session. |
+| `GET` | `/admins/sign_in` | Render Devise login page. |
+| `POST` | `/admins/sign_in` | Create an admin session. |
+| `GET` | `/match/api/v2/auth/admins/authenticate` | Return current admin session as JSON, including CSRF token. |
+| `DELETE` | `/match/api/v2/auth/admins/sign_out` | Clear the admin session for React API mode. |
+
+Protected action item API requests pass through `Match::Api::V2::Admin::BaseController`, which returns `401 admin_authorization_error` when no Devise admin session exists.
 
 All action item endpoints are nested under a campaign:
 
@@ -195,14 +213,20 @@ Common error codes:
 
 This project follows the same high-level request lifecycle Khai will see in BitStar-style Rails code:
 
-1. Browser or API client sends a request to a nested admin endpoint.
-2. `config/routes.rb` resolves the request to `Match::Api::V2::Admin::CampaignActionItemsController`.
-3. Controller callbacks load the campaign and target action item.
-4. Strong parameters whitelist permitted request fields.
-5. The controller delegates filtering, cache, and search behavior to service objects.
-6. ActiveRecord reads or writes MySQL records through models and associations.
-7. Serializer turns model data into a stable JSON response shape.
-8. Controller renders JSON, redirects in training HTML flows, or returns an empty response for delete.
+1. Admin signs up or logs in through Devise HTML routes.
+2. Devise creates the admin session cookie.
+3. React API mode checks the current admin by calling `/match/api/v2/auth/admins/authenticate`.
+4. React domain hooks call repositories; components do not call `fetch` directly.
+5. HTTP repositories call `/match/api/v2/admin/*` with JSON headers and CSRF token.
+6. In local dev, Vite forwards `/match/*` requests to the Rails server at `localhost:3000`.
+7. `config/routes.rb` resolves the request to `Match::Api::V2::Admin::CampaignActionItemsController`.
+8. `BaseController` verifies `admin_signed_in?` before controller actions run.
+9. Controller callbacks load the campaign and target action item.
+10. Strong parameters whitelist permitted request fields.
+11. The controller delegates filtering, cache, and search behavior to service objects.
+12. ActiveRecord reads or writes MySQL records through models and associations.
+13. Serializer turns model data into a stable JSON response shape.
+14. Controller renders JSON, redirects in training HTML flows, or returns an empty response for delete.
 
 Training-only HTML routes also cover helper usage, template rendering, and redirect behavior.
 
@@ -284,6 +308,12 @@ The page owns screen-level orchestration:
 
 ### Components
 
+`frontend/bsmatch/components/adminAuth/`
+
+Main auth component:
+
+- `AdminAuthBar`
+
 `frontend/bsmatch/components/campaignActionItems/`
 
 Main components:
@@ -311,11 +341,19 @@ The domain layer owns:
 
 ### Repository
 
+`frontend/bsmatch/repositories/adminAuthRepository.ts`
+
+Defines the current admin session contract used by the page.
+
 `frontend/bsmatch/repositories/campaignActionItemsRepository.ts`
 
 Defines the data access contract used by the domain and page.
 
 ### Infrastructure
+
+`frontend/bsmatch/infrastructures/http/adminAuthHttpRepository.ts`
+
+Checks the current admin session and sends logout requests through JSON auth endpoints.
 
 `frontend/bsmatch/infrastructures/http/campaignActionItemsHttpRepository.ts`
 
@@ -327,6 +365,10 @@ Maps between API JSON and frontend entities:
 `frontend/bsmatch/infrastructures/demo/demoCampaignActionItemsRepository.ts`
 
 Provides mock data for UI review without requiring a running Rails API session.
+
+`frontend/bsmatch/infrastructures/demo/demoAdminAuthRepository.ts`
+
+Provides a mock admin session for UI review without requiring Devise login.
 
 ## UI Runtime Modes
 
@@ -354,7 +396,7 @@ API mode calls the Rails API through the Vite proxy.
 http://localhost:5173/?api=1&campaignId=1
 ```
 
-Use this mode only after the Rails server and admin session are ready.
+Use this mode only after the Rails server and admin session are ready. In this mode, the browser calls relative `/match/*` URLs, and Vite forwards those requests to Rails at `localhost:3000`.
 
 ## Setup
 
@@ -406,6 +448,17 @@ http://localhost:3000/admin/training/campaign_action_items
 
 This flow demonstrates ERB render, helper methods, redirect after create, and strong parameters separate from the JSON API.
 
+### Auth Pages
+
+After running the Rails server, open:
+
+```text
+http://localhost:3000/admins/sign_up
+http://localhost:3000/admins/sign_in
+```
+
+The Rails layout shows login, signup, logout, and the signed-in admin email.
+
 
 Open the mock UI:
 
@@ -430,7 +483,7 @@ bundle exec rspec
 Current verified backend result:
 
 ```text
-69 examples, 0 failures
+77 examples, 0 failures
 ```
 
 ### Frontend Typecheck
@@ -448,7 +501,7 @@ npm test
 Current verified frontend result:
 
 ```text
-5 test suites, 13 tests
+6 test suites, 18 tests
 ```
 
 ### Frontend Build

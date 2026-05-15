@@ -1,6 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe 'Campaign action items training HTML', type: :request do
+  let(:admin) { create(:admin) }
+
+  before do
+    sign_in admin
+  end
+
   describe 'GET /admin/training/campaign_action_items' do
     it 'renders the training index page' do
       campaign = create(:campaign, name: 'Spring Campaign')
@@ -28,7 +34,7 @@ RSpec.describe 'Campaign action items training HTML', type: :request do
   end
 
   describe 'POST /admin/training/campaign_action_items' do
-    it 'redirects to show and ignores unpermitted creator id' do
+    it 'redirects to show and assigns the signed-in admin as creator' do
       campaign = create(:campaign)
       unsafe_admin = create(:admin)
 
@@ -46,12 +52,22 @@ RSpec.describe 'Campaign action items training HTML', type: :request do
       end.to change(CampaignActionItem, :count).by(1)
 
       action_item = CampaignActionItem.last
-      expect(action_item.created_by_admin_id).to be_nil
+      expect(action_item.created_by_admin_id).to eq(admin.id)
       expect(response).to redirect_to("/admin/training/campaign_action_items/#{action_item.id}")
 
       follow_redirect!
 
       expect(response.body).to include('Created through HTML flow')
+    end
+  end
+
+  describe 'authentication' do
+    it 'redirects guests to the admin login page' do
+      sign_out admin
+
+      get '/admin/training/campaign_action_items'
+
+      expect(response).to redirect_to('/admins/sign_in')
     end
   end
 end

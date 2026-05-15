@@ -10,7 +10,31 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="<%= ["#{controller_path.tr('/', '-')}-page", ('admin-training-page' if controller_path.start_with?('admin_training/'))].compact.join(' ') %>">
+  <body class="<%= ["#{controller_path.tr('/', '-')}-page", ('admin-training-page' if controller_path.start_with?('admin_training/')), ('devise-page' if devise_controller?)].compact.join(' ') %>">
+    <header class="auth-bar">
+      <div>
+        <%= link_to 'Campaign Action Items', admin_training_campaign_action_items_path %>
+      </div>
+
+      <nav>
+        <% if admin_signed_in? %>
+          <span><%= current_admin.email %></span>
+          <%= button_to 'Logout', destroy_admin_session_path, method: :delete %>
+        <% else %>
+          <%= link_to 'Login', new_admin_session_path %>
+          <%= link_to 'Sign up', new_admin_registration_path %>
+        <% end %>
+      </nav>
+    </header>
+
+    <% if notice.present? %>
+      <p class="flash-message"><%= notice %></p>
+    <% end %>
+
+    <% if alert.present? %>
+      <p class="flash-message flash-message--alert"><%= alert %></p>
+    <% end %>
+
     <%= yield %>
   </body>
 </html>

@@ -1,5 +1,7 @@
 module AdminTraining
   class CampaignActionItemsController < ApplicationController
+    before_action :authenticate_admin!
+
     def index
       load_index_state
       @action_item = CampaignActionItem.new(status: :todo)
@@ -11,6 +13,7 @@ module AdminTraining
 
     def create
       @action_item = CampaignActionItem.new(campaign_action_item_params)
+      @action_item.created_by_admin = current_admin
 
       if @action_item.save
         redirect_to "/admin/training/campaign_action_items/#{@action_item.id}", notice: 'Campaign action item was created.'

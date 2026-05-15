@@ -1,6 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { CampaignActionItemsPage } from './bsmatch/pages/CampaignActionItemsPage';
+import { DemoAdminAuthRepository } from './bsmatch/infrastructures/demo/demoAdminAuthRepository';
 import { DemoCampaignActionItemsRepository } from './bsmatch/infrastructures/demo/demoCampaignActionItemsRepository';
 import './styles/campaignActionItems.css';
 
@@ -8,6 +9,7 @@ const rootElement = document.getElementById('root');
 const params = new URLSearchParams(window.location.search);
 const campaignId = Number(params.get('campaignId') ?? '1');
 const repository = params.get('api') === '1' ? undefined : new DemoCampaignActionItemsRepository(campaignId);
+const authRepository = params.get('api') === '1' ? undefined : new DemoAdminAuthRepository();
 
 if (!rootElement) {
   throw new Error('Root element was not found.');
@@ -15,6 +17,6 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
   <React.StrictMode>
-    <CampaignActionItemsPage campaignId={campaignId} repository={repository} />
+    <CampaignActionItemsPage authRepository={authRepository} campaignId={campaignId} repository={repository} />
   </React.StrictMode>
 );

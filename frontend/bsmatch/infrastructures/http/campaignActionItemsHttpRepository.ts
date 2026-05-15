@@ -89,7 +89,7 @@ export class CampaignActionItemsHttpRepository implements CampaignActionItemsRep
 
   public async list(campaignId: number, filters: CampaignActionItemFilters = {}): Promise<CampaignActionItemsListResult> {
     const response = await this.client.fetch(`${campaignActionItemsPath(campaignId)}?${toQueryString(filters)}`, {
-      headers: jsonHeaders(this.csrfToken)
+      headers: jsonHeaders(this.currentCsrfToken())
     });
     const body = await parseJsonResponse<CampaignActionItemsIndexApiResponse>(response);
 
@@ -103,7 +103,7 @@ export class CampaignActionItemsHttpRepository implements CampaignActionItemsRep
   public async create(campaignId: number, input: CampaignActionItemInput): Promise<CampaignActionItem> {
     const response = await this.client.fetch(campaignActionItemsPath(campaignId), {
       method: 'POST',
-      headers: jsonHeaders(this.csrfToken),
+      headers: jsonHeaders(this.currentCsrfToken()),
       body: JSON.stringify(toPayload(input))
     });
     const body = await parseJsonResponse<CampaignActionItemApiResponse>(response);
@@ -118,7 +118,7 @@ export class CampaignActionItemsHttpRepository implements CampaignActionItemsRep
   ): Promise<CampaignActionItem> {
     const response = await this.client.fetch(campaignActionItemPath(campaignId, actionItemId), {
       method: 'PATCH',
-      headers: jsonHeaders(this.csrfToken),
+      headers: jsonHeaders(this.currentCsrfToken()),
       body: JSON.stringify(toPayload(input))
     });
     const body = await parseJsonResponse<CampaignActionItemApiResponse>(response);
@@ -129,10 +129,14 @@ export class CampaignActionItemsHttpRepository implements CampaignActionItemsRep
   public async destroy(campaignId: number, actionItemId: number): Promise<void> {
     const response = await this.client.fetch(campaignActionItemPath(campaignId, actionItemId), {
       method: 'DELETE',
-      headers: jsonHeaders(this.csrfToken)
+      headers: jsonHeaders(this.currentCsrfToken())
     });
 
     await parseEmptyResponse(response);
+  }
+
+  private currentCsrfToken(): string | undefined {
+    return this.csrfToken ?? readCsrfToken();
   }
 }
 

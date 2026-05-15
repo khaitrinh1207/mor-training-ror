@@ -6,6 +6,229 @@
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
+.auth-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 24px;
+  border-bottom: 1px solid #dce3ee;
+  background: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.auth-bar nav,
+.auth-bar form {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.auth-bar a,
+.auth-bar button {
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 12px;
+  color: #ffffff;
+  background: #2563eb;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.auth-bar span {
+  color: #516076;
+  font-weight: 700;
+}
+
+.flash-message {
+  width: min(1120px, calc(100% - 48px));
+  margin: 16px auto 0;
+  padding: 12px 16px;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  color: #1e3a8a;
+  background: #eff6ff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.flash-message--alert {
+  border-color: #fecaca;
+  color: #991b1b;
+  background: #fef2f2;
+}
+
+.devise-page {
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.18), transparent 34rem),
+    linear-gradient(135deg, #f8fbff 0%, #eef3fb 52%, #e9eef7 100%);
+  color: #172033;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.devise-page .auth-shell {
+  display: flex;
+  width: min(460px, calc(100% - 48px));
+  margin: 64px auto;
+}
+
+.devise-page .auth-card {
+  width: 100%;
+  border: 1px solid rgba(160, 174, 198, 0.28);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 28px 80px rgba(32, 46, 75, 0.14);
+  backdrop-filter: blur(18px);
+}
+
+.devise-page .auth-card {
+  padding: 34px;
+}
+
+.devise-page .auth-card__intro {
+  margin-bottom: 28px;
+}
+
+.devise-page .auth-card__eyebrow {
+  margin: 0 0 10px;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.devise-page h1,
+.devise-page h2,
+.devise-page p {
+  margin: 0;
+}
+
+.devise-page h1 {
+  color: #111827;
+  font-size: clamp(32px, 5vw, 46px);
+  line-height: 1.02;
+  letter-spacing: -0.055em;
+}
+
+.devise-page .auth-card__intro p,
+.devise-page .auth-field__hint {
+  color: #627089;
+}
+
+.devise-page .auth-card__intro p {
+  margin-top: 14px;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.devise-page .auth-card__form {
+  display: grid;
+  gap: 18px;
+  width: 100%;
+}
+
+.devise-page .auth-field {
+  display: grid;
+  gap: 8px;
+}
+
+.devise-page .auth-field label {
+  color: #374151;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.devise-page .auth-field__hint {
+  font-size: 13px;
+}
+
+.devise-page .auth-field input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #c8d4e8;
+  border-radius: 16px;
+  padding: 14px 16px;
+  background: #f8fbff;
+  color: #111827;
+  font: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.devise-page .auth-field input:focus {
+  outline: none;
+  border-color: #2563eb;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.devise-page .auth-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #45546d;
+  font-weight: 700;
+}
+
+.devise-page .auth-card__submit {
+  width: 100%;
+  border: 0;
+  border-radius: 16px;
+  padding: 15px 18px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  box-shadow: 0 16px 36px rgba(37, 99, 235, 0.28);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.devise-page .auth-card__submit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 20px 42px rgba(37, 99, 235, 0.34);
+}
+
+.devise-page .auth-links {
+  display: grid;
+  gap: 10px;
+  margin-top: 24px;
+  padding-top: 22px;
+  border-top: 1px solid #e3e9f5;
+}
+
+.devise-page .auth-links a {
+  color: #2563eb;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.devise-page .auth-links a:hover {
+  text-decoration: underline;
+}
+
+.devise-page .auth-errors {
+  margin: 0 0 22px;
+  padding: 16px;
+  border: 1px solid #fecaca;
+  border-radius: 18px;
+  color: #991b1b;
+  background: #fff1f2;
+}
+
+.devise-page .auth-errors h2 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+.devise-page .auth-errors ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
 .admin-training-page .training-shell {
   width: min(1120px, calc(100% - 48px));
   margin: 0 auto;
@@ -129,6 +352,16 @@
   .admin-training-page form,
   .admin-training-page dl {
     grid-template-columns: 1fr;
+  }
+
+  .devise-page .auth-shell {
+    width: min(100% - 28px, 460px);
+    margin: 28px auto 48px;
+  }
+
+  .devise-page .auth-card {
+    padding: 24px;
+    border-radius: 22px;
   }
 
   .admin-training-page table {

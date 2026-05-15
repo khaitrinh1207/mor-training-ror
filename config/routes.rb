@@ -1,9 +1,16 @@
 Rails.application.routes.draw do
-  devise_for :admins, skip: [:registrations]
+  devise_for :admins
 
   namespace :match do
     namespace :api do
       namespace :v2 do
+        namespace :auth do
+          namespace :admins do
+            get :authenticate, to: 'sessions#authenticate'
+            delete :sign_out, to: 'sessions#destroy'
+          end
+        end
+
         namespace :admin do
           resources :campaigns, only: [] do
             resources :action_items, controller: 'campaign_action_items', only: [:index, :create, :update, :destroy]

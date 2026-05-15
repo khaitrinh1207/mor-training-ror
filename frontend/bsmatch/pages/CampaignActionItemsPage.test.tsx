@@ -2,6 +2,7 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CampaignActionItemsPage } from './CampaignActionItemsPage';
 import type { CampaignActionItem, CampaignActionItemsListResult } from '../domains/campaignActionItems/entities';
+import type { AdminAuthRepository } from '../repositories/adminAuthRepository';
 import type { CampaignActionItemsRepository } from '../repositories/campaignActionItemsRepository';
 
 const actionItem: CampaignActionItem = {
@@ -41,11 +42,21 @@ const buildRepository = (): jest.Mocked<CampaignActionItemsRepository> => ({
   destroy: jest.fn().mockResolvedValue(undefined)
 });
 
+const buildGuestAuthRepository = (): jest.Mocked<AdminAuthRepository> => ({
+  authenticate: jest.fn().mockResolvedValue(null),
+  logout: jest.fn().mockResolvedValue(undefined)
+});
+
+const buildLoggedInAuthRepository = (): jest.Mocked<AdminAuthRepository> => ({
+  authenticate: jest.fn().mockResolvedValue({ id: 7, email: 'admin@example.com' }),
+  logout: jest.fn().mockResolvedValue(undefined)
+});
+
 describe('CampaignActionItemsPage', () => {
   it('loads and renders campaign action item data', async () => {
     const repository = buildRepository();
 
-    render(<CampaignActionItemsPage campaignId={10} repository={repository} />);
+    render(<CampaignActionItemsPage authRepository={buildLoggedInAuthRepository()} campaignId={10} repository={repository} />);
 
     expect(await screen.findByText('Confirm creator shortlist')).toBeInTheDocument();
     expect(screen.getByText('Tổng')).toBeInTheDocument();
@@ -53,11 +64,39 @@ describe('CampaignActionItemsPage', () => {
     expect(repository.list).toHaveBeenCalledWith(10, { page: 1, perPage: 20 });
   });
 
+  it('renders signup and login links for guest admins', async () => {
+    const repository = buildRepository();
+
+    render(<CampaignActionItemsPage authRepository={buildGuestAuthRepository()} campaignId={10} repository={repository} />);
+
+    expect(await screen.findByRole('link', { name: 'Đăng nhập' })).toHaveAttribute('href', '/admins/sign_in');
+    expect(screen.getByRole('link', { name: 'Đăng ký' })).toHaveAttribute('href', '/admins/sign_up');
+    expect(screen.getByRole('status')).toHaveTextContent('Bạn cần đăng nhập admin để xem dữ liệu chiến dịch.');
+    expect(screen.queryByText('Confirm creator shortlist')).not.toBeInTheDocument();
+    expect(repository.list).not.toHaveBeenCalled();
+  });
+
+  it('renders logout for signed-in admins', async () => {
+    const user = userEvent.setup();
+    const repository = buildRepository();
+    const authRepository = buildLoggedInAuthRepository();
+
+    render(<CampaignActionItemsPage authRepository={authRepository} campaignId={10} repository={repository} />);
+
+    expect(await screen.findByText('admin@example.com')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Đăng xuất' }));
+
+    expect(authRepository.logout).toHaveBeenCalledTimes(1);
+    expect(await screen.findByRole('link', { name: 'Đăng nhập' })).toBeInTheDocument();
+    expect(screen.queryByText('Confirm creator shortlist')).not.toBeInTheDocument();
+  });
+
   it('submits filters, inline status updates, creates, and deletes through the repository', async () => {
     const user = userEvent.setup();
     const repository = buildRepository();
 
-    render(<CampaignActionItemsPage campaignId={10} repository={repository} />);
+    render(<CampaignActionItemsPage authRepository={buildLoggedInAuthRepository()} campaignId={10} repository={repository} />);
     await screen.findByText('Confirm creator shortlist');
 
     const filterForm = screen.getByRole('form', { name: 'Lọc đầu việc chiến dịch' });
